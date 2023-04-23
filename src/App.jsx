@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { Container, Dimmer, Loader } from 'semantic-ui-react';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
@@ -8,6 +8,19 @@ import Planets from './components/Planets';
 import Starships from './components/Starships';
 import './App.scss';
 
+// Single Responsibility Principle
+// FetchData class is responsible for making API calls and handling errors
+class FetchData {
+	async fetchData(url) {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.results;
+	}
+}
+
 function App() {
 	const [people, setPeople] = useState([]);
 	const [planets, setPlanets] = useState([]);
@@ -15,30 +28,31 @@ function App() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		async function fetchData(url, setState) {
-			const response = await fetch(url);
-			const data = await response.json();
-			setState(data.results);
+		const fetchData = new FetchData();
+
+		// Open-Closed Principle
+		// fetchResources is a reusable function that can be extended with new resources
+		async function fetchResources(resources, setResources) {
+			try {
+				const results = await fetchData.fetchData(
+					`https://swapi.dev/api/${resources}/?format=json`
+				);
+				setResources(results);
+			} catch (error) {
+				console.error(error);
+			}
 		}
 
-		const fetchPeople = async () => {
-			await fetchData('https://swapi.dev/api/people/?format=json', setPeople);
+		const fetchAllResources = async () => {
+			await Promise.all([
+				fetchResources('people', setPeople),
+				fetchResources('planets', setPlanets),
+				fetchResources('starships', setStarships),
+			]);
+			setLoading(false);
 		};
 
-		const fetchPlanets = async () => {
-			await fetchData('https://swapi.dev/api/planets/?format=json', setPlanets);
-		};
-
-		const fetchStarships = async () => {
-			await fetchData(
-				'https://swapi.dev/api/starships/?format=json',
-				setStarships
-			);
-		};
-
-		Promise.all([fetchPeople(), fetchPlanets(), fetchStarships()])
-			.then(() => setLoading(false))
-			.catch((error) => console.error(error));
+		fetchAllResources();
 	}, []);
 
 	const renderLoader = () => {
@@ -54,7 +68,7 @@ function App() {
 
 	const renderContent = () => {
 		return (
-			<Switch>
+			<BrowserRouter>
 				<Route
 					exact
 					path="/"
@@ -79,7 +93,7 @@ function App() {
 				>
 					<Starships data={starships} />
 				</Route>
-			</Switch>
+			</BrowserRouter>
 		);
 	};
 
