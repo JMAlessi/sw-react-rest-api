@@ -7,14 +7,14 @@ export default function People({ data }) {
 		<>
 			<h1>People</h1>
 			<Grid columns={1}>
-				{data.map((people, i) => {
+				{data.map((person, i) => {
 					return (
 						<Grid.Column key={i}>
 							<Card>
 								<Card.Content>
-									<Card.Header>{people.name}</Card.Header>
+									<Card.Header>{person.name}</Card.Header>
 									<Card.Description>
-										<CharacterInfo characterInfo={people} />
+										<CharacterInfo character={person} />
 									</Card.Description>
 								</Card.Content>
 							</Card>

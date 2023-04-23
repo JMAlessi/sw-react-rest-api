@@ -9,13 +9,13 @@ export default function Navbar() {
 				<Link to="/">
 					<Menu.Item name="Home" />
 				</Link>
-				<Link to="/people.jsx">
+				<Link to="/people">
 					<Menu.Item name="People" />
 				</Link>
-				<Link to="/planets.jsx">
+				<Link to="/planets">
 					<Menu.Item name="Planets" />
 				</Link>
-				<Link to="/starships.jsx">
+				<Link to="/starships">
 					<Menu.Item name="Starships" />
 				</Link>
 			</Container>

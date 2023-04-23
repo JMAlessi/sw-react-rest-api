@@ -1,50 +1,34 @@
-import React, { Component } from "react";
+import React, { useState } from 'react';
 
-class PlanetInfo extends Component {
-  constructor(props) {
-    super(props);
+function PlanetInfo(props) {
+	const [expanded, setExpanded] = useState(false);
+	const { climate, terrain } = props.planetInfo;
 
-    this.state = {
-      expanded: false
-    };
+	const toggleExpanded = () => {
+		setExpanded(!expanded);
+	};
 
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
-
-  open() {
-    this.setState({ expanded: !this.state.expanded });
-  }
-
-  close() {
-    this.setState({ expanded: !this.state.expanded });
-  }
-
-  render() {
-    const info = this.props.planetInfo;
-
-    if (!this.state.expanded) {
-      return <button onClick={this.open}>View info</button>;
-    }
-
-    return (
-      <div>
-        <ul>
-          <li>
-            <p>
-              <strong>Climate:</strong> {info.climate}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>Terrain:</strong> {info.terrain}
-            </p>
-          </li>
-        </ul>
-        <button onClick={this.close}>Hide info</button>
-      </div>
-    );
-  }
+	return (
+		<div>
+			{expanded ? (
+				<ul>
+					<li>
+						<p>
+							<strong>Climate:</strong> {climate}
+						</p>
+					</li>
+					<li>
+						<p>
+							<strong>Terrain:</strong> {terrain}
+						</p>
+					</li>
+				</ul>
+			) : (
+				<button onClick={toggleExpanded}>View info</button>
+			)}
+			{expanded && <button onClick={toggleExpanded}>Hide info</button>}
+		</div>
+	);
 }
 
 export default PlanetInfo;

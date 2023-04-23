@@ -4,7 +4,7 @@ import Searchbar from './Searchbar';
 import Autocomplete from './Autocomplete';
 import Character from './Character';
 
-export default class Home extends Component {
+class Home extends Component {
 	constructor(props) {
 		super(props);
 
@@ -14,6 +14,7 @@ export default class Home extends Component {
 			showAutocomplete: false,
 			character: {},
 			homeworld: {},
+			error: null,
 		};
 
 		this.onClick = this.onClick.bind(this);
@@ -23,44 +24,64 @@ export default class Home extends Component {
 	onClick(item) {
 		const homeworld = item.homeworld;
 
-		return axios
+		axios
 			.get(homeworld)
 			.then((home) => {
 				this.setState({
 					showAutocomplete: false,
 					character: item,
 					homeworld: home.data,
+					error: null,
 				});
 			})
-			.catch((err) => console.log('Error: ', err));
+			.catch((err) => {
+				console.log('Error: ', err);
+				this.setState({
+					error: 'Error occurred while loading data. Please try again later.',
+				});
+			});
 	}
 
 	onChange(event) {
+		const value = event.target.value;
 		this.setState({
 			showAutocomplete: true,
-			value: event.target.value,
+			value,
+			error: null,
 		});
 		axios
-			.get(`https://swapi.co/api/people/?search=${this.state.value}`)
-			.then((character) => {
+			.get(`https://swapi.dev/api/people/?search=${value}`)
+			.then((response) => {
 				this.setState({
-					autocomplete: character.data.results,
+					autocomplete: response.data.results,
+					error: null,
 				});
 			})
-			.catch((err) => console.log('Error: ', err));
+			.catch((err) => {
+				console.log('Error: ', err);
+				this.setState({
+					error: 'Error occurred while loading data. Please try again later.',
+				});
+			});
 	}
 
 	render() {
-		const { value, autocomplete, showAutocomplete, character, homeworld } =
-			this.state;
+		const {
+			value,
+			autocomplete,
+			showAutocomplete,
+			character,
+			homeworld,
+			error,
+		} = this.state;
+
 		return (
 			<div className="home">
-				<h1>A Star Wars React App made by J.M. Alessi</h1>
+				<h1>sw-rest-app</h1>
 				<p>
-					A sample React app written in JavaScript (ES6), which makes API calls
-					to{' '}
+					A sample application for for making API calls to{' '}
 					<a
-						href="https://swapi.co"
+						href="https://swapi.dev"
 						target="_blank"
 					>
 						The Star Wars API
@@ -68,32 +89,36 @@ export default class Home extends Component {
 					.
 				</p>
 				<p>
-					Click the nav-links above to view a list of People, Planets or
-					Starships. All of the information provided through this app is
-					courtesy of The Star Wars API (an open-source resource).
+					Click the links above to view a list of People, Planets or Starships.
+					All of the data rendered is provided open-source from The Star Wars
+					API.
 				</p>
 				<p>
-					<strong>
-						Feel free to search for characters belonging to the Star Wars
-						franchise by typing in a name of your choice in the search bar
-						below!
-					</strong>
+					<strong>Search by typing something in the search bar below.</strong>
 				</p>
 				<Searchbar
 					value={value}
 					onChange={this.onChange}
 				/>
-				<Autocomplete
-					showAutocomplete={showAutocomplete}
-					autocomplete={autocomplete}
-					onClick={this.onClick}
-				/>
-				<h3>Happy browsing!</h3>
-				<Character
-					character={character}
-					homeworld={homeworld}
-				/>
+				{error ? (
+					<p className="error">{error}</p>
+				) : (
+					<Autocomplete
+						showAutocomplete={showAutocomplete}
+						autocomplete={autocomplete}
+						onClick={this.onClick}
+					/>
+				)}
+				<h3>~ J. A.</h3>
+				{Object.keys(character).length > 0 && (
+					<Character
+						character={character}
+						homeworld={homeworld}
+					/>
+				)}
 			</div>
 		);
 	}
 }
+
+export default Home;

@@ -1,50 +1,54 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class CharacterInfo extends Component {
-  constructor(props) {
-    super(props);
+	static propTypes = {
+		characterInfo: PropTypes.shape({
+			gender: PropTypes.string,
+			birth_year: PropTypes.string,
+		}),
+	};
 
-    this.state = {
-      expanded: false
-    };
+	constructor(props) {
+		super(props);
 
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
+		this.state = {
+			expanded: false,
+		};
 
-  open() {
-    this.setState({ expanded: !this.state.expanded });
-  }
+		this.toggleInfo = this.toggleInfo.bind(this);
+	}
 
-  close() {
-    this.setState({ expanded: !this.state.expanded });
-  }
+	toggleInfo() {
+		this.setState((prevState) => ({ expanded: !prevState.expanded }));
+	}
 
-  render() {
-    const info = this.props.characterInfo;
+	render() {
+		const { characterInfo } = this.props;
+		const { expanded } = this.state;
 
-    if (!this.state.expanded) {
-      return <button onClick={this.open}>View info</button>;
-    }
+		if (!expanded) {
+			return <button onClick={this.toggleInfo}>View info</button>;
+		}
 
-    return (
-      <div>
-        <ul>
-          <li>
-            <p>
-              <strong>Gender:</strong> {info.gender}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>Birth year:</strong> {info.birth_year}
-            </p>
-          </li>
-        </ul>
-        <button onClick={this.close}>Hide info</button>
-      </div>
-    );
-  }
+		return (
+			<div>
+				<ul>
+					<li>
+						<p>
+							<strong>Gender:</strong> {characterInfo.gender}
+						</p>
+					</li>
+					<li>
+						<p>
+							<strong>Birth year:</strong> {characterInfo.birth_year}
+						</p>
+					</li>
+				</ul>
+				<button onClick={this.toggleInfo}>Hide info</button>
+			</div>
+		);
+	}
 }
 
 export default CharacterInfo;

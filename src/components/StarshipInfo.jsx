@@ -1,50 +1,42 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 class StarshipInfo extends Component {
-  constructor(props) {
-    super(props);
+	state = {
+		expanded: false,
+	};
 
-    this.state = {
-      expanded: false
-    };
+	toggleExpanded = () => {
+		this.setState((prevState) => ({ expanded: !prevState.expanded }));
+	};
 
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
+	render() {
+		const { starshipInfo } = this.props;
+		const { expanded } = this.state;
 
-  open() {
-    this.setState({ expanded: !this.state.expanded });
-  }
-
-  close() {
-    this.setState({ expanded: !this.state.expanded });
-  }
-
-  render() {
-    const info = this.props.starshipInfo;
-
-    if (!this.state.expanded) {
-      return <button onClick={this.open}>View info</button>;
-    }
-
-    return (
-      <div>
-        <ul>
-          <li>
-            <p>
-              <strong>Crew:</strong> {info.crew}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>Passengers:</strong> {info.passengers}
-            </p>
-          </li>
-        </ul>
-        <button onClick={this.close}>Hide info</button>
-      </div>
-    );
-  }
+		return (
+			<div>
+				{expanded ? (
+					<>
+						<ul>
+							<li>
+								<p>
+									<strong>Crew:</strong> {starshipInfo.crew}
+								</p>
+							</li>
+							<li>
+								<p>
+									<strong>Passengers:</strong> {starshipInfo.passengers}
+								</p>
+							</li>
+						</ul>
+						<button onClick={this.toggleExpanded}>Hide info</button>
+					</>
+				) : (
+					<button onClick={this.toggleExpanded}>View info</button>
+				)}
+			</div>
+		);
+	}
 }
 
 export default StarshipInfo;
