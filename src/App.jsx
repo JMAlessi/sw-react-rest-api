@@ -8,19 +8,6 @@ import Planets from './components/Planets';
 import Starships from './components/Starships';
 import './App.scss';
 
-// Single Responsibility Principle
-// FetchData class is responsible for making API calls and handling errors
-class FetchData {
-	async fetchData(url) {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data = await response.json();
-		return data.results;
-	}
-}
-
 function App() {
 	const [people, setPeople] = useState([]);
 	const [planets, setPlanets] = useState([]);
@@ -28,16 +15,11 @@ function App() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const fetchData = new FetchData();
-
-		// Open-Closed Principle
-		// fetchResources is a reusable function that can be extended with new resources
-		async function fetchResources(resources, setResources) {
+		async function fetchData(resource, setData) {
 			try {
-				const results = await fetchData.fetchData(
-					`https://swapi.dev/api/${resources}/?format=json`
-				);
-				setResources(results);
+				const response = await fetch(`/api/${resource}`);
+				const data = await response.json();
+				setData(data);
 			} catch (error) {
 				console.error(error);
 			}
@@ -45,9 +27,9 @@ function App() {
 
 		const fetchAllResources = async () => {
 			await Promise.all([
-				fetchResources('people', setPeople),
-				fetchResources('planets', setPlanets),
-				fetchResources('starships', setStarships),
+				fetchData('people', setPeople),
+				fetchData('planets', setPlanets),
+				fetchData('starships', setStarships),
 			]);
 			setLoading(false);
 		};
@@ -96,7 +78,6 @@ function App() {
 			</BrowserRouter>
 		);
 	};
-
 	return (
 		<BrowserRouter>
 			<>
