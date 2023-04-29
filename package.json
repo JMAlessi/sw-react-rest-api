@@ -19,7 +19,7 @@
 		"semantic-ui-react": "^2.1.4"
 	},
 	"scripts": {
-		"start": "concurrently \"npm run server\" \"npm run client\"",
+		"start": "concurrently \"npm run server\" \"npm run client\" --kill-others",
 		"client": "react-scripts start",
 		"server": "nodemon server.js",
 		"build": "react-scripts build",
